@@ -98,8 +98,6 @@ class TakenCourse(Course):
     def getCourse(self):
         return self
 
-    # def getCourseSemesterByCode(code):
-
 
 class CollegeCourse(Course):
     # implements and complete class CollegeCourse
@@ -248,11 +246,28 @@ class StudentProfile:
     def getStudentID(self):
         return self.studentId
 
+    def getStudentTitle(self, isTitle = False):
+
+        if isTitle:
+            if self.getGender().upper() == "M":
+                return "Sir"
+            elif self.getGender().upper() == "F":
+                return "Madam"
+            else:
+                return "Sir/Madam"
+        
+        if self.getGender().upper() == "M":
+            return "Mr."
+        elif self.getGender().upper() == "F":
+            return "Mrs."
+        else:
+            return ""
+
     def showMyCourses(portalManager):
         global loggedInAccount
         loggedInStudent = portalManager._portal.findStudent(loggedInAccount.getStudentID())
 
-        print("Hi, Mr./Mrs. ", loggedInAccount.getFullName(),end=",\n")
+        print(f"Hi, {loggedInAccount.getStudentTitle()}", loggedInAccount.getFullName(),end=",\n")
         print("You have taken the following courses so far:")
         coursesList = loggedInStudent.getGTranscript().getAllCourses()
         courseCounter = 0
@@ -296,12 +311,19 @@ class StudentProfile:
 
         manager = Manager.getManager()
 
-        print("Dear Sir/Madam,", end="\n\n")
-        print(f"This is to certify that Mr./Mrs. {loggedInAccount.getFullName()} with Student ID {loggedInAccount.getStudentID()} is a student at semester {currentSemester.getSemesterNo()} at CICCC.")
-        print(f"He/She was admitted to our college in {loggedInStudent.getAdmissionYear()} and has taken {qtyTakenCourses} course(s) so far.")
-        print(f"Currently, he/she resides at {loggedInAccount.getAddress()}.",end="\n\n")
+        if loggedInAccount.getStudentTitle() == "Mr.":
+            genderCall = "he"
+        elif loggedInAccount.getStudentTitle() == "Mrs.":
+            genderCall = "she"
+        elif loggedInAccount.getStudentTitle() == "":
+            genderCall = "he/she"
+
+        print(f"Dear {loggedInAccount.getStudentTitle(True)},", end="\n\n")
+        print(f"This is to certify that {loggedInAccount.getStudentTitle()} {loggedInAccount.getFullName()} with Student ID {loggedInAccount.getStudentID()} is a student at semester {currentSemester.getSemesterNo()} at CICCC.")
+        print(f"{genderCall.capitalize()} was admitted to our college in {loggedInStudent.getAdmissionYear()} and has taken {qtyTakenCourses} course(s) so far.")
+        print(f"Currently, {genderCall} resides at {loggedInAccount.getAddress()}.",end="\n\n")
         print("If you have any questions, please don't hesitate to contact us.")
-        print("Thanks")
+        print("Thanks,")
         print(f"[Manager: {manager.getFullName()}]")
         print("\n----------------")
         print("Press any key to return to the main menu")
@@ -311,7 +333,7 @@ class StudentProfile:
         global loggedInAccount
         loggedInStudent = portalManager._portal.findStudent(loggedInAccount.getStudentID())
 
-        print("Hi, Mr./Mrs. ", loggedInAccount.getFullName(),end=",\n")
+        print(f"Hi, {loggedInAccount.getStudentTitle()}", loggedInAccount.getFullName(),end=",\n")
         print("Here is your general transcript:")
         coursesList = loggedInStudent.getGTranscript().getAllCourses()
         courseCounter = 0
@@ -348,7 +370,7 @@ class StudentProfile:
         global loggedInAccount
         loggedInStudent = portalManager._portal.findStudent(loggedInAccount.getStudentID())
 
-        print("Hi, Mr./Mrs. ", loggedInAccount.getFullName(),end=",\n")
+        print(f"Hi, {loggedInAccount.getStudentTitle()}", loggedInAccount.getFullName(),end=",\n")
         print(f"Your overall GPA is: {loggedInStudent.calculateGPA():.2f}",end="\n\n")
         print(f"Your current semester's GPA is: {loggedInStudent.calculateGPA(True):.2f}",end="\n\n")
 
@@ -374,7 +396,7 @@ class StudentProfile:
 
         rankPosition = sortedGPAList.index(studentGPA) + 1
 
-        print("Hi, Mr./Mrs. ", loggedInAccount.getFullName(),end=",\n")
+        print(f"Hi, {loggedInAccount.getStudentTitle()}", loggedInAccount.getFullName(),end=",\n")
         print(f"Your overall GPA is {studentGPA:.2f} and therefore your rank is {rankPosition}")
 
         print("\n----------------")
@@ -813,7 +835,7 @@ class PortalManager:
         # create a student 1
         student1Profile = StudentProfile("Peter", "Sand", "M", "Ireland", 21, "Vancouver",8012321)
         student1Profile.saveStudentProfile()
-        student1 = Student(student1Profile, 2020)
+        student1 = Student(student1Profile, 2019)
 
         # register the student 1
         self._portal.registerStudent(student1)
@@ -833,7 +855,7 @@ class PortalManager:
         # create a student 2
         student2Profile = StudentProfile("Sheila", "Rogers", "F", "India", 19, "Surrey",8014525)
         student2Profile.saveStudentProfile()
-        student2 = Student(student2Profile, 2020)
+        student2 = Student(student2Profile, 2018)
 
         # register the student 2
         self._portal.registerStudent(student2)
@@ -844,7 +866,7 @@ class PortalManager:
         student2.registerCourse(CollegeCourse("Problem Solving", "CSCI201", 1), Semester(2, 2018), 85)
         student2.registerCourse(CollegeCourse("Project Management", "CSCI202", 3), Semester(1, 2019), 56)
         student2.registerCourse(CollegeCourse("Java Programming", "CSCI301", 3), Semester(1, 2019), 75)
-        student2.registerCourse(CollegeCourse("Web Development", "CSCI302", 2), Semester(2, 2029), 76)
+        student2.registerCourse(CollegeCourse("Web Development", "CSCI302", 2), Semester(2, 2019), 76)
         student2.registerCourse(CollegeCourse("Android Programming", "CSCI401", 2), Semester(2, 2019), 80)
         student2.registerCourse(CollegeCourse("iOS Application", "CSCI402", 3), Semester(1, 2020), 74)
 
@@ -857,7 +879,7 @@ class PortalManager:
         # create a student 3
         student3Profile = StudentProfile("Edward", "Richards", "M", "China", 20, "Burnaby",8011111)
         student3Profile.saveStudentProfile()
-        student3 = Student(student3Profile, 2020)
+        student3 = Student(student3Profile, 2019)
 
         # register the student 3
         self._portal.registerStudent(student3)
@@ -875,7 +897,7 @@ class PortalManager:
         # create a student 4
         student4Profile = StudentProfile("Souzan", "Robson", "F", "India", 20, "Surrey",8033344)
         student4Profile.saveStudentProfile()
-        student4 = Student(student4Profile, 2020)
+        student4 = Student(student4Profile, 2019)
 
         # register the student 4
         self._portal.registerStudent(student4)
@@ -896,7 +918,7 @@ class PortalManager:
         # create a student 5
         student5Profile = StudentProfile("Jeff", "Cooper", "M", "England", 21, "Vancouver",8012322)
         student5Profile.saveStudentProfile()
-        student5 = Student(student5Profile, 2020)
+        student5 = Student(student5Profile, 2018)
 
         # register the student 5
         self._portal.registerStudent(student5)
@@ -965,9 +987,13 @@ class PortalManager:
             else:
                 for i in range(len(studentCourseList)):
                     if course.getCourseCode() == studentCourseList[i].getCourseCode():
+                        studentAdmissionYear = loggedInStudent.getAdmissionYear()
+                        yearNo = studentCourseList[i].getCourseSemester().getYear()
                         semesterNo = studentCourseList[i].getCourseSemester().getSemesterNo()
-                        print(f" [Taken at semester {semesterNo}]")
 
+                        takenAtSemester = (yearNo - studentAdmissionYear) * 2 + semesterNo
+
+                        print(f" [Taken at semester {takenAtSemester}]")
 
         print("\n----------------")
         print("Press any key to return to the main menu")
